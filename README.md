@@ -82,6 +82,7 @@ terraform output  >> ../../terraform_resources.conf
 kubectl exec --stdin --tty pod-node-affinity-zeroday-attacker-pod --namespace default -- /bin/bash  
 ```
   Run ./actions.sh + other commands wanted and then exit the shell.
+  When you log back in, you should see the bash history updated.
 
 ## Run script: 
 python3 memory_collection.py --gke_node_name GKE_NODE_NAME
