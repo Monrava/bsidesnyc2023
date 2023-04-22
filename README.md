@@ -79,7 +79,7 @@ terraform output  >> ../../terraform_resources.conf
 
 ## Access resources:
 ```bash
-kubectl exec --stdin --tty pod-node-affinity-zeroday-attacker-pod --namespace default -- /bin/bash  
+kubectl exec --stdin --tty pod-node-affinity-bsides-attacker-pod --namespace default -- /bin/bash  
 ```
   Run ./actions.sh + other commands wanted and then exit the shell.
   When you log back in, you should see the bash history updated.
