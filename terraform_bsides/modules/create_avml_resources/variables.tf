@@ -42,7 +42,8 @@ variable "disk_size" {
 
 variable "installation_path" {
    type        = string
-   description = "Base image for compute engines."
+   description = "Installation path for the scripts."
+   default = "/home/marshal"
    #default = "ENTER_YOUR_INSTALLATION_PATH_HERE"
 }
 
@@ -55,7 +56,7 @@ variable "machine_type" {
 
 variable "installation_script" {
    type        = string
-   description = "Base image for compute engines."
+   description = "Installation dependency script name."
    default = "install_dependencies.sh"
 }
 
@@ -67,12 +68,13 @@ variable "installation_script_bucket_path" {
 
 variable "installation_user" {
    type        = string
-   description = "The path to where installation scripts are stored in the."
+   description = "The user to where installation scripts are stored."
    #default = "ENTER_YOUR_USERNAME_HERE"
+   default = "marshal"
 }
 
 variable "volatility_script" {
    type        = string
-   description = "The path to where installation scripts are stored in the."
+   description = "The installation script name."
    default = "volatility_commands.sh"
 }

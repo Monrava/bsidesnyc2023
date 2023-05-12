@@ -1,5 +1,4 @@
 #################################################################################################
-#FROM debian:stable-slim
 FROM nginx:latest
 RUN apt-get update && \
        apt-get install -y --no-install-recommends apt-utils && \
@@ -40,4 +39,3 @@ WORKDIR /avml
 RUN rustup target add x86_64-unknown-linux-musl
 RUN cargo build --release --target x86_64-unknown-linux-musl
 #########################################################################################################
-# gdb and strace

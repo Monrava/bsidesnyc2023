@@ -1,7 +1,6 @@
 #########################################################################################################
 # Install dependencies
 #########################################################################################################
-#FROM debian:stable-slim
 FROM nginx:latest
 LABEL maintainer="marcus <marcus.oj.hallberg@gmail.com>"
 RUN apt-get update && \

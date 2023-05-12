@@ -10,11 +10,16 @@ Demo setup for BSidesNYC2023
   ### Install Terraform:
    https://registry.terraform.io/providers/hashicorp/google/latest/docs/guides/getting_started
   ### Instantiate: 
-    terraform init
-
+  ```bash
+  $ terraform init
+  ```
+  
   ### Update environment:
   Modify variables.tf for all terraform folders to reflect your GCP environment.    
-  See: ./bsidesnyc2023/terraform_bsides/modules/create_avml_resources/variables.tf
+  See: 
+  ```bash
+  $ vim ./bsidesnyc2023/terraform_bsides/modules/create_avml_resources/variables.tf
+  ```
 
 ## Create virtual environment and install dependencies
 ```bash
@@ -24,19 +29,20 @@ $ source .venv/bin/activate
 ```
 ## Authenticate to GCP
 ```bash
-gcloud auth application-default login
+$ gcloud auth application-default login
 ```
 ### Activate GCP ssh key permissions: 
-  ```bash
-  ssh-add ~/.ssh/google_compute_engine
-  ```
+```bash
+$ ssh-add ~/.ssh/google_compute_engine
+```
 
 ## Add permissions 
 ### (Unless already assinged to IAM principle):
 Add the following permissions to your gcloud principle in your GCP project.
 ```  	
-  Project IAM Admin				
-  Service Account Admin
+Project IAM Admin				
+Service Account Admin
+Service Account Token Creator
 ```
 ## Enable billing acccount
 ### (Unless active):
@@ -46,54 +52,54 @@ Check your CPU limitations based on the resources you want to create:
 ## Enable GCP project services:
   https://cloud.google.com/migrate/containers/docs/config-dev-env
   https://console.cloud.google.com/apis/dashboard?project=bsidesnyc2023
-  ```bash
-  gcloud services enable servicemanagement.googleapis.com servicecontrol.googleapis.com cloudresourcemanager.googleapis.com compute.googleapis.com container.googleapis.com containerregistry.googleapis.com cloudbuild.googleapis.com
+```bash
+$ gcloud services enable servicemanagement.googleapis.com servicecontrol.googleapis.com cloudresourcemanager.googleapis.com compute.googleapis.com container.googleapis.com containerregistry.googleapis.com cloudbuild.googleapis.com
 ```
 ## Create GCR images:
 ```bash
-export gcp_project=YOUR_GCP_PROJECT_NAME
+$ export gcp_project=YOUR_GCP_PROJECT_NAME
+$ export zone=ZONE
 
-docker build -t gcr.io/$gcp_project/avml_image:latest -f image_files/avml/Dockerfile .
+$ docker build -t gcr.io/$gcp_project/avml_image:latest -f image_files/avml/Dockerfile .
 
-docker build -t gcr.io/$gcp_project/attacker_image:latest  -f image_files/attacker/Dockerfile .
+$ docker build -t gcr.io/$gcp_project/attacker_image:latest  -f image_files/attacker/Dockerfile .
 ```
 ## Push GCR images:
 ```bash
-docker push  gcr.io/$gcp_project/avml_image:latest  
-docker push  gcr.io/$gcp_project/attacker_image:latest 
+$ docker push  gcr.io/$gcp_project/avml_image:latest  
+$ docker push  gcr.io/$gcp_project/attacker_image:latest 
 ```
-## Create Terraform GKE cluster and instance:
+## Create Terraform GKE cluster, resources and instance:
 ```bash
-cd ./bsidesnyc2023/terraform_bsides
-terraform apply -lock=true -auto-approve
-terraform output  >> terraform_resources.conf
-```
-
-## Create GKE pods
-Once the cluster is active and running, create the associated pods.
-```bash
-cd ./bsides/terraform_bsides/modules/create_resources
-terraform apply -lock=true -auto-approve
-terraform output  >> ../../terraform_resources.conf
+$ cd ./bsidesnyc2023/terraform_bsides
+$ terraform apply -lock=true -auto-approve
+$ terraform output  >> terraform_resources.conf
 ```
 
 ## Access resources:
 ```bash
-kubectl exec --stdin --tty pod-node-affinity-bsides-attacker-pod --namespace default -- /bin/bash  
+$ gcloud container clusters get-credentials bsides-gke-cluster --zone $zone --project $gcp_project
+$ kubectl exec --stdin --tty pod-node-affinity-bsides-attacker-pod --namespace default -- /bin/bash  
 ```
-  Run ./actions.sh + other commands wanted and then exit the shell.
-  When you log back in, you should see the bash history updated.
+Run:
+```bash
+$ ./actions.sh 
+```
+And other commands you want and then exit the shell.
+When you log back in, you should see the bash history updated by typing:
+```bash
+$ history
+```
 
 ## Run script: 
 python3 memory_collection.py --gke_node_name GKE_NODE_NAME
 E.g.
 ```bash
-python3 memory_collection.py --gke_node_name gke-bsides-gke-clust-bsides-gke-node--582e49eb-pq03
+$ python3 memory_collection_bsides.py --gke_node_name gke-bsides-gke-clust-bsides-gke-node--f72013e9-jm9c
 ```
   
-
 ## Access forensic compute engine:
 Once the script finishes, access the AVML instance here.
 ```bash
-gcloud compute ssh "avml-instance" --tunnel-through-iap
+$ gcloud compute ssh "avml-instance" --tunnel-through-iap
 ```

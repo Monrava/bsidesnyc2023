@@ -3,7 +3,6 @@
 ####################################################
 resource "google_compute_instance" "avml-instance" {
   name         = "avml-instance"
-  #machine_type = "e2-micro"
   machine_type = var.machine_type
   zone         = var.zone
 
@@ -25,10 +24,6 @@ resource "google_compute_instance" "avml-instance" {
     #  // Assigns an ephemeral public IP
     }
   }
-
-  # metadata = {
-  #   creator = var.user_account
-  # }
 
   metadata_startup_script = "${data.template_file.avml_startup_script.rendered}" # This should be the output from the rendered template in main.tf
 

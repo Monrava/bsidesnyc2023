@@ -1,1 +1,0 @@
-{"Modules":[{"Key":"","Source":"","Dir":"."},{"Key":"avml_resources","Source":"./modules/create_avml_resources","Dir":"modules/create_avml_resources"},{"Key":"gke_cluster","Source":"./modules/create_cluster","Dir":"modules/create_cluster"},{"Key":"gke_resources","Source":"./modules/create_resources","Dir":"modules/create_resources"}]}
