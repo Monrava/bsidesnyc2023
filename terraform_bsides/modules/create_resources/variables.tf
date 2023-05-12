@@ -1,7 +1,4 @@
-variable "pid" {
-   type        = string
-   description = "GCP project."
-}
+variable "pid" {}
 
 variable "zone" {
    type        = string
