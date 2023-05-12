@@ -16,9 +16,11 @@ Demo setup for BSidesNYC2023
   
   ### Update environment:
   Modify variables.tf for all terraform folders to reflect your GCP environment.    
-  See: 
+  Variables to add: 
   ```bash
-  $ vim ./bsidesnyc2023/terraform_bsides/modules/create_avml_resources/variables.tf
+  var.pid
+  var.installation_user
+  var.installation_path
   ```
 
 ## Create virtual environment and install dependencies
