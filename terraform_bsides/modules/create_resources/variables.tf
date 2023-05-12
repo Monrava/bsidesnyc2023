@@ -1,7 +1,6 @@
 variable "pid" {
    type        = string
    description = "GCP project."
-   default = "bsidesnyc2023"
 }
 
 variable "zone" {

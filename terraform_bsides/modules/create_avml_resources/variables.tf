@@ -7,7 +7,6 @@ variable "new_service_account_name" {
 variable "pid" {
    type        = string
    description = "GCP project."
-   default = "bsidesnyc2023"
 }
 
 variable "region" {
@@ -43,14 +42,11 @@ variable "disk_size" {
 variable "installation_path" {
    type        = string
    description = "Installation path for the scripts."
-   default = "/home/marshal"
-   #default = "ENTER_YOUR_INSTALLATION_PATH_HERE"
 }
 
 variable "machine_type" {
    type        = string
    description = "Base image for compute engines."
-   #default = "e2-standard-32"
    default = "e2-standard-8"
 }
 
@@ -69,8 +65,6 @@ variable "installation_script_bucket_path" {
 variable "installation_user" {
    type        = string
    description = "The user to where installation scripts are stored."
-   #default = "ENTER_YOUR_USERNAME_HERE"
-   default = "marshal"
 }
 
 variable "volatility_script" {
