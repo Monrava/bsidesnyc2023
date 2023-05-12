@@ -4,10 +4,7 @@ variable "new_service_account_name" {
    default = "tf-avml-sa"
 }
 
-variable "pid" {
-   type        = string
-   description = "GCP project."
-}
+variable "pid" {}
 
 variable "region" {
    type        = string
@@ -39,11 +36,6 @@ variable "disk_size" {
    default      = "500"
 }
 
-variable "installation_path" {
-   type        = string
-   description = "Installation path for the scripts."
-}
-
 variable "machine_type" {
    type        = string
    description = "Base image for compute engines."
@@ -62,10 +54,9 @@ variable "installation_script_bucket_path" {
    default = "avml_instance_scripts"
 }
 
-variable "installation_user" {
-   type        = string
-   description = "The user to where installation scripts are stored."
-}
+variable "installation_path" {}
+
+variable "installation_user" {}
 
 variable "volatility_script" {
    type        = string

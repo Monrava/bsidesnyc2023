@@ -3,6 +3,9 @@
 ########################################################################
 module "avml_resources" {
     source  = "./modules/create_avml_resources"
+    pid = var.pid
+    installation_user = var.module_avml_resources_installation_user
+    installation_path = var.module_avml_resources_installation_path
     providers = {
       google = google.gcp
     }
@@ -10,6 +13,7 @@ module "avml_resources" {
 
 module "gke_cluster" {
     source  = "./modules/create_cluster"
+    pid = var.pid
     providers = {
       google = google.gcp
     }
@@ -17,6 +21,7 @@ module "gke_cluster" {
 
 module "gke_resources" {
     source  = "./modules/create_resources"
+    pid = var.pid
     depends_on = [ module.gke_cluster ]
     providers = {
       google = google.gcp
@@ -48,6 +53,16 @@ provider "kubernetes" {
 variable "pid" {
    type        = string
    description = "GCP project."
+}
+
+variable "module_avml_resources_installation_path" {
+   type        = string
+   description = "Installation path for the scripts. E.g. /home/gcp_test_user"
+}
+
+variable "module_avml_resources_installation_user" {
+   type        = string
+   description = "The user to where installation scripts are stored. E.g. gcp_test_user"
 }
 
 variable "zone" {

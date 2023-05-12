@@ -4,10 +4,7 @@ variable "gke_service_account_name" {
    default = "bsides-gke-sa"
 }
 
-variable "pid" {
-   type        = string
-   description = "GCP project."
-}
+variable "pid" {}
 
 variable "region" {
    type        = string
