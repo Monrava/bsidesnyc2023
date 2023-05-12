@@ -7,7 +7,6 @@ variable "gke_service_account_name" {
 variable "pid" {
    type        = string
    description = "GCP project."
-   default = "bsidesnyc2023"
 }
 
 variable "region" {
@@ -31,7 +30,6 @@ variable "vpc" {
 variable "compute_engine_type" {
    type        = string
    description = "Compute engine type."
-   #default = "e2-medium-32"
    default = "e2-standard-8"
 }
 
