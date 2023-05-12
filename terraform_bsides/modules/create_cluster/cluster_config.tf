@@ -11,7 +11,6 @@ resource "google_container_cluster" "bsides-gke-cluster" {
   node_config {
     preemptible     = true
     machine_type    = var.compute_engine_type
-#    tags            = ["bsides-https-access-rule", "bsides-ssh-access-rule"]
     tags            = [google_compute_firewall.bsides-access-rule.name]
 
     # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
@@ -25,9 +24,9 @@ resource "google_container_cluster" "bsides-gke-cluster" {
   }
 }
 #################################################################################
-provider "kubernetes" {
-  config_path = "~/.kube/config"
-}
+# provider "kubernetes" {
+#   config_path = "~/.kube/config"
+# }
 #################################################################################
 resource "google_container_node_pool" "primary_preemptible_nodes" {
   name              = "bsides-gke-node-pool"

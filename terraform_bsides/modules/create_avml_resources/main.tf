@@ -1,11 +1,16 @@
-# Define provider
-provider "google" {
-  project = var.pid
-  region  = var.region
-  zone    = var.zone
+#################################################################################
+# Define required providers
+#################################################################################
+terraform {
+  required_providers {
+    google = {
+      source  = "hashicorp/google"
+    }
+  }
 }
-
-
+#################################################################################
+# Define variables
+#################################################################################
 variable "list_of_roles_to_grant_to_service_account_tf_avml" {
   # Description: These are the roles we want to grant to service account: bsides-automation-nonprod-sa
   description = "IAM roles to grant to the service account"

@@ -16,14 +16,9 @@ BEFORE RUNNING:
 3. Install the Python client library for Google APIs by running
    `pip install --upgrade google-api-python-client`
     pip install --upgrade google-cloud-storage
-4. Checkout credentials for kubectl:
-    gcloud container clusters get-credentials bsides-gke-cluster --zone europe-west1-b --project bsidesnyc2023
-5. Get BUILD_ID from GKE node image
 """
-import re
 import json
 import time
-import inspect
 import datetime
 import google.auth
 import kubernetes
@@ -31,22 +26,14 @@ import base64
 import argparse
 import google.auth
 import google.auth.transport.requests
-from googleapiclient import discovery
-from kubernetes import client as kubernetes_client
 from tempfile import NamedTemporaryFile
-from urllib3.exceptions import MaxRetryError
 from google.cloud import storage
 from google.cloud import container
 from google.auth.transport import requests
 from datetime import datetime, timedelta
 from google.auth.exceptions import TransportError
-from kubernetes import client, config
-from kubernetes.client import Configuration
-from kubernetes.client.api import core_v1_api
 from kubernetes.client.exceptions import ApiException, ApiValueError
 from kubernetes.stream import stream
-from threading import Thread
-
 ########################################################################################################################
 def get_credentials(project_id: str):
     # Start authentication - with subprocess modification to allow for re-enabling the project creds.
@@ -66,8 +53,6 @@ def get_credentials(project_id: str):
     credentials, project_id = google.auth.default()
     credentials.refresh(requests.Request())
     return credentials
-
-
 ########################################################################################################################
 def generate_signed_url(
     target_project: str,
@@ -77,19 +62,6 @@ def generate_signed_url(
     sa_acc_to_imp: str,
     content_type="application/octet-stream",
 ):
-    """
-    --------------------------------------------------------------------------------
-    Notes for generate_signed_url():
-    Compute a GCS signed upload URL without needing a private key file.
-    Can only be called when:
-    - A service account is used as the application default credentials
-    - The service account has the proper IAM roles, like `roles/storage.objectCreator` for the bucket, and
-    - The principal members of that service account need to have `roles/iam.serviceAccountTokenCreator` and `roles/iam.serviceAccountAdmin
-    - You also need two APIs enabled: iamcredentials.googleapis.com and cloudresourcemanager.googleapis.com
-    Source: https://stackoverflow.com/a/64245028,
-    https://cloud.google.com/iam/docs/impersonating-service-accounts#iam-service-accounts-grant-role-sa-gcloud
-    --------------------------------------------------------------------------------
-    """
     response = {}
     response["status"] = "not_ready"
 
@@ -100,10 +72,10 @@ def generate_signed_url(
     try:
         url = blob.generate_signed_url(
             service_account_email=sa_acc_to_imp,
-            access_token=cred.token,  # member credentials of an IAM group that is a principal of a service account. The member has the rights: "roles/iam.serviceAccountAdmin","roles/iam.serviceAccountTokenCreator"
+            access_token=cred.token,  
             version="v4",
             expiration=datetime.now()
-            + timedelta(hours=6),  # Give it a time of 6 h to run.
+            + timedelta(hours=6), 
             method="PUT",
             content_type=content_type,
         )
@@ -121,12 +93,9 @@ def generate_signed_url(
 def kube_client(
     cred_gke: google.auth.credentials, cluster_id: str, project_id: str, zone: str
 ):
-    # Source: https://github.com/googleapis/python-container/issues/6
     response = {}
     response["status"] = "not_ready"
     container_client = google.cloud.container.ClusterManagerClient(credentials=cred_gke)
-
-    # Multi-zone clusters carry the region ref => zone = 'us-central1'
     request = {"name": f"projects/{project_id}/locations/{zone}/clusters/{cluster_id}"}
     resp = container_client.get_cluster(request=request)
     configuration = kubernetes.client.Configuration()
@@ -182,7 +151,7 @@ def define_kubectl_commands(
             "-c",
             "python3 "
             + attacker_script_file
-            + " > /dev/null 2> /dev/null &",  # https://stackoverflow.com/questions/49244935/running-background-process-with-kubectl-exec
+            + " > /dev/null 2> /dev/null &", 
         ]
     ]
     # Add download commands from bucket
@@ -211,8 +180,6 @@ def define_kubectl_commands(
         "rm vmlinux",
     ]
     return instace_commands, avml_commands, attacker_commands
-
-
 #########################################################################################################################
 def memdump_container_run_cmd(exec_command_array, pod_name, pod_namespace, v1):
     # Docs: https://askubuntu.com/questions/141928/what-is-the-difference-between-bin-sh-and-bin-bash
@@ -239,8 +206,6 @@ def memdump_container_run_cmd(exec_command_array, pod_name, pod_namespace, v1):
             print(f"error for: {exec_command}" + "\n" + "was: " + str(e))
             response[str(exec_command)]["status"] = "Failed"
     return response
-
-
 ########################################################################################################################
 def avml_instance_actions(
     cred, instance_name, project_id, zone, blob_object_name, instace_commands
@@ -272,8 +237,6 @@ def avml_instance_actions(
             response[str(instance_command)]["status"] = "Failed"
 
     return response
-
-
 ########################################################################################################################
 def get_gcp_environment(terraform_file_name: str):
     import os
@@ -294,8 +257,6 @@ def get_gcp_environment(terraform_file_name: str):
     except FileNotFoundError as e:
         print(f"error was: {e}")
     return response
-
-
 ########################################################################################################################
 if __name__ == "__main__":
 
@@ -304,20 +265,23 @@ if __name__ == "__main__":
     gcp_setup = get_gcp_environment(terraform_file_name)
 
     # Setting variables
-    project = gcp_setup["gcp_project"]
-    instance_name = gcp_setup["gcp_instance"]
-    zone = gcp_setup["zone"]
-    bucket_name = gcp_setup["gcp_avml_bucket"]
-    target_project = gcp_setup["gcp_project"]
-    sa_acc_to_imp = gcp_setup["gcp_instance_avml_sa"]
-    volatility_script = gcp_setup["volatility_script"]
-    cluster_id = gcp_setup["gke_cluster_name"]  # 'bsides-gke-cluster'
-    pod_name_avml = gcp_setup["pod_name_avml"]  #'pod-node-affinity-mem-dump'
-    pod_namespace_avml = gcp_setup[
-        "pod_namespace_avml"
-    ]  #'namespace_bsidesnyc2023_mem_dump'
-    pod_name_att = gcp_setup["pod_name_att"]  #'pod_node_affinity_attacker_pod'
-    pod_namespace_att = gcp_setup["pod_namespace_att"]  #'default'
+    try:
+        project = gcp_setup["gcp_project"]
+        instance_name = gcp_setup["gcp_instance"]
+        zone = gcp_setup["zone"]
+        bucket_name = gcp_setup["gcp_avml_bucket"]
+        target_project = gcp_setup["gcp_project"]
+        sa_acc_to_imp = gcp_setup["gcp_instance_avml_sa"]
+        volatility_script = gcp_setup["volatility_script"]
+        cluster_id = gcp_setup["gke_cluster_name"]  # 'bsides-gke-cluster'
+        pod_name_avml = gcp_setup["pod_name_avml"]  #'pod-node-affinity-mem-dump'
+        pod_namespace_avml = gcp_setup[
+            "pod_namespace_avml"
+        ]  #'namespace_bsidesnyc2023_mem_dump'
+        pod_name_att = gcp_setup["pod_name_att"]  #'pod_node_affinity_attacker_pod'
+        pod_namespace_att = gcp_setup["pod_namespace_att"]  #'default'
+    except KeyError as e:
+        print(f"error was: {e}")
     blob_object_name = (
         "output_" + datetime.today().strftime("%Y_%m_%d_%H_%M") + ".lime.compressed"
     )

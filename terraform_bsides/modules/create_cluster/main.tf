@@ -31,13 +31,14 @@ resource "google_project_iam_member" "roles_to_grant_to_service_account_gke" {
   role     = each.value
 }
 #################################################################################
-#data "google_client_config" "provider" {}
+# Define required providers
 #################################################################################
-# Define provider
-provider "google" {
-  project = var.pid
-  region  = var.region
-  zone    = var.zone
+terraform {
+  required_providers {
+    google = {
+      source  = "hashicorp/google"
+    }
+  }
 }
 #################################################################################
 # Define outputs for the other config
@@ -46,7 +47,12 @@ output "gke_cluster_name" {
   value = google_container_cluster.bsides-gke-cluster.name
   #sensitive = true
 }
+output "kubernetes_host" {
+  value = "https://${google_container_cluster.bsides-gke-cluster.endpoint}"
+}
 
-output "primary_preemptible_nodes" {
-  value = google_container_node_pool.primary_preemptible_nodes.instance_group_urls
+output "kubernetes_cluster_ca_certificate" {
+  value = base64decode(
+    google_container_cluster.bsides-gke-cluster.master_auth[0].cluster_ca_certificate
+    )
 }
