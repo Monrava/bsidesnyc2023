@@ -2,8 +2,7 @@
 
 ## Supported Versions
 
-Use this section to tell people about which versions of your project are
-currently being supported with security updates.
+Versions of dependencies for code used in this repository.
 
 | Version  | Supported              |
 | -------- | ---------------------- |
