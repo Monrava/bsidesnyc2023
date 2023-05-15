@@ -5,15 +5,15 @@
 Use this section to tell people about which versions of your project are
 currently being supported with security updates.
 
-| Version  | Supported                |
-| -------- | ------------------------ |
-| 2.7.0    | :google-cloud-storage:   |
-| 2.17.4   | :google-cloud-container: |
-| 0.34.0   | :google-cloud:           |
-| 2.16.2   | :google-auth:            |
-| 26.1.0   | :kubernetes:             |
-| 1.24.2   | :numpy:                  |
-| 1.4.0    | :argparse:               |
+| Version  | Supported              |
+| -------- | ---------------------- |
+| 2.7.0    | google-cloud-storage   |
+| 2.17.4   | google-cloud-container |
+| 0.34.0   | google-cloud           |
+| 2.16.2   | google-auth            |
+| 26.1.0   | kubernetes             |
+| 1.24.2   | numpy                  |
+| 1.4.0    | argparse               |
 
 ## Reporting Security Issues
 
