@@ -1,7 +1,7 @@
 #########################################################################################################
 # Install dependencies
 #########################################################################################################
-FROM nginx:latest
+FROM debian:stable-slim
 LABEL maintainer="marcus <marcus.oj.hallberg@gmail.com>"
 RUN apt-get update && \
        apt-get install -y --no-install-recommends apt-utils && \
@@ -30,3 +30,4 @@ WORKDIR /scripts
 RUN chmod a+x actions.sh
 RUN chmod a+x cmds.py
 RUN python3 -m pip install -r requirements.txt
+CMD ["tail", "-f", "/dev/null"]
