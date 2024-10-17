@@ -4,7 +4,8 @@
 #!/bin/bash
 sudo apt-get update
 #wait 30
-sudo apt-get install -yq build-essential python3-pip rsync python3-dev libffi-dev gcc libc-dev cargo make musl-dev musl-tools musl curl git golang-1.14
+#sudo apt-get install -yq build-essential python3-pip rsync python3-dev libffi-dev gcc libc-dev cargo make musl-dev musl-tools musl curl git golang-1.14
+sudo apt-get install -yq build-essential python3-pip rsync python3-dev python3.11-venv libffi-dev gcc libc-dev cargo make musl-dev musl-tools musl curl git golang
 #apt-get update && \
     #    apt-get install -y --no-install-recommends apt-utils && \
     #    apt-get -y install sudo && \
@@ -44,12 +45,15 @@ cd $HOME
 git clone https://github.com/volatilityfoundation/dwarf2json.git
 cd dwarf2json
 # Install using the required go version
-/usr/lib/go-1.14/bin/go build 
+#/usr/lib/go-1.14/bin/go build 
+/usr/lib/go/bin/go build 
 cd $HOME
 
 # Install volatility3
 git clone https://github.com/volatilityfoundation/volatility3.git
 cd volatility3
+python3 -m venv venv
+source venv/bin/activate
 pip3 install -r requirements.txt
 python3 setup.py build
 #sudo python3 setup.py install

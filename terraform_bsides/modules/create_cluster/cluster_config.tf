@@ -4,6 +4,7 @@ resource "google_container_cluster" "bsides-gke-cluster" {
   # Remeber to specify VPC.
   network                     = var.vpc
   remove_default_node_pool    = true
+  deletion_protection         = false
   enable_intranode_visibility = false
   initial_node_count          = 1
 
