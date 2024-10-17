@@ -98,7 +98,7 @@ terraform output  >> terraform_resources.conf
 
 When you've completed the testing you can destroy the resources by:
 ```bash
-terraform destroy -lock=false
+terraform destroy
 ```
 
 ## Access resources
